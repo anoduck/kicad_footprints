@@ -1,3 +1,8 @@
+WARNING
+=======
+
+This repo has been modified to run on my personal OpenBSD system. If you are running linux, you will need to exchange the `ggrep` command back to `grep`. You will also need the python module "chardet" installed on your system. It is used to detect character encoding in the mod files.
+
 # KiCad footprint collection
 
 - This is a collection of all the KiCad footprints I know of. If you know of any more, please let me know! (Ideally by opening a pull-request or at least an issue on this repo.)
