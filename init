@@ -10,5 +10,5 @@ export GIT_ASKPASS=/bin/echo
 
 git submodule init
 
-git submodule | awk '{ print $2 }' | grep --invert-match --fixed-strings --file=$ignore_file \
+git submodule | awk '{ print $2 }' | ggrep --invert-match --fixed-strings --file=$ignore_file \
   | xargs -I'{}' -P$max_parallel_tasks sh clone.sh '{}'

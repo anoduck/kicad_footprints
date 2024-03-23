@@ -1,11 +1,17 @@
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 """
 replaces paths for 3d models in the footprints with actual 3d files when we can
 find them
 """
 
 import os
+import sys
 import re
+sys.path.append(os.path.expanduser('~/.local/lib/python3.11'))
+from chardet.universaldetector import UniversalDetector
 
+udetect = UniversalDetector()
 mods = []
 git_root = None
 for dirname, dirnames, filenames in os.walk("./"):
@@ -30,9 +36,18 @@ for dirname, dirnames, filenames in os.walk("./"):
 
 for git_root, mod in mods:
     model_paths = []
+    udetect.reset()
+    with open(mod, "rb") as f:
+        for line in f:
+            udetect.feed(line)
+            if udetect.done:
+                break
+        f.close()
+    encoding = udetect.result['encoding']
+    udetect.close()
     try:
-        with open(mod, "r") as f:
-            text = f.read()
+        with open(mod, "r", encoding=encoding) as g:
+            text = g.read()
             new_text = text
             model_paths = re.findall(r"\(model \"?(.+?)\"?\n", text)
             for path in model_paths:
@@ -49,8 +64,9 @@ for git_root, mod in mods:
 
         if new_text != text:
             print("Replacing 3d model path for {}".format(mod))
-            with open(mod, "w") as f:
+            with open(mod, "w", encoding=encoding) as f:
                 f.write(new_text)
 
     except Exception as e:
         print("Could not parse {}: {}".format(mod, e))
+        continue
